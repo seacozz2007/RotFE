@@ -27,13 +27,13 @@ RSRot.RS.Springs=[1 3];
 RSRot.RS.Unban=[2];
 
 %时间序列
-RSRot.RS.t = 0:dt:(dt*nt);
+RSRot.RS.t = 0:RSRot.RS.dt:(RSRot.RS.dt*RSRot.RS.nt);
 %求解固有频率 转速为0
 RSRot.FRes = eRotF(full(Rot.K),full(Rot.M));
 %初始状态 位移
-q0=zeros(nDOF,1);
+RSRot.RS.q0=zeros(RSRot.RS.nDOF,1);
 %初始状态 速度
-dq0=zeros(nDOF,1);
+RSRot.RS.dq0=zeros(RSRot.RS.nDOF,1);
 %边界条件  无约束
-bcdof=zeros(nDOF,1);
+RSRot.RS.bcdof=zeros(RSRot.RS.nDOF,1);
 
