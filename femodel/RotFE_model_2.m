@@ -13,7 +13,7 @@
 % by:seaco 20170116
 
 %自由度
-RSRot.RS.nDOF= Rot.dim; 
+RSRot.RS.nDOF= RSRot.dim; 
 %总步长
 RSRot.RS.nt = 1000; 
 %步间
@@ -29,11 +29,12 @@ RSRot.RS.Unban=[2];
 %时间序列
 RSRot.RS.t = 0:RSRot.RS.dt:(RSRot.RS.dt*RSRot.RS.nt);
 %求解固有频率 转速为0
-RSRot.FRes = eRotF(full(Rot.K),full(Rot.M));
+RSRot.FRes = eRotF(full(RSRot.K),full(RSRot.M));
 %初始状态 位移
 RSRot.RS.q0=zeros(RSRot.RS.nDOF,1);
 %初始状态 速度
 RSRot.RS.dq0=zeros(RSRot.RS.nDOF,1);
 %边界条件  无约束
 RSRot.RS.bcdof=zeros(RSRot.RS.nDOF,1);
+
 
