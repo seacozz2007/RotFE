@@ -21,15 +21,19 @@ function [acc,vel,dsp]=fewilson(Rot)
 %--------------------------------------------------------------------------
 %  (1) initial condition
 %--------------------------------------------------------------------------
+kk=full(Rot.K);
+mm=full(Rot.M);
+cc=Rot*kk*Rot.B+Rot.W*full(Rot.G);
 [sdof,n2]=size(kk);
-
+nt=Rot.RS.nt;
 dsp=zeros(sdof,nt);                                         % displacement matrix
 vel=zeros(sdof,nt);                                             % velocity matrix
 acc=zeros(sdof,nt);                                          % acceleration matrix
  
-dsp(:,1)=q0;                                               % initial displacement
-vel(:,1)=dq0;                                                   % initial velocity
- 
+dsp(:,1)=Rot.RS.q0;                                               % initial displacement
+vel(:,1)=Rot.RS.dq0;                                                   % initial velocity
+W = RS.W;
+bcdof = Rot.RS.bcdof;
 theta=1.4;                                          % select the parameters
 %--------------------------------------------------------------------------
 %  (2) Wilson   integration scheme for time integration
@@ -46,8 +50,21 @@ for i=1:sdof                  % assign zero to dsp, vel, acc of the dofs associa
     acc(i,1)=0;
   end
 end
-
+fd=zeros(RS.dim,nt);
 for it=1:nt                                              % loop for each time step
+   %计算 不平衡力
+   
+   %x方向
+   fx = Rot.RS.me*W^2*cos(W*it*dt);
+   %fy = Rot.RS.me*W^2*sin(W*it*dt);
+   fy = Rot.RS.me*W^2*cos(W*it*dt)*W*it*dt;
+   
+   %计算 油膜压力
+   
+   fd(Rot.RS.Unban*2-1,it+1) = fx;
+   fd(Rot.RS.Unban*2-1+Rot.dim/2) =fy;
+   %附值到fd上;
+   
   cfm=dsp(:,it)*(6/(theta*dt)^2)+vel(:,it)*(6/(theta*dt))+2*acc(:,it);
   cfc=dsp(:,it)*(3/(theta*dt))+2*vel(:,it)+acc(:,it)*(theta*dt/2);
   efd=fd(:,it)+theta*(fd(:,it+1)-fd(:,it))+mm*cfm+cc*cfc;
@@ -70,9 +87,8 @@ for it=1:nt                                              % loop for each time st
       acc(i,it+1)=0;
     end
   end
- 
 end
- 
+
 if cc(1,1)==0
   disp('The transient response results of undamping system')
 else

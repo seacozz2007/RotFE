@@ -12,6 +12,9 @@
 %
 % by:seaco 20170116
 
+%阻尼系统
+RSRot.B=25e-5;
+
 %自由度
 RSRot.RS.nDOF= RSRot.dim; 
 %总步长
@@ -37,4 +40,9 @@ RSRot.RS.dq0=zeros(RSRot.RS.nDOF,1);
 %边界条件  无约束
 RSRot.RS.bcdof=zeros(RSRot.RS.nDOF,1);
 
-
+%轴承参数
+RSRot.BEARING.L = 0.01;
+RSRot.BEARING.C = 90e-6;
+RSRot.BEARING.D = 0.031;
+RSRot.BEARING.R = RSRot.BEARING.D/2;
+RSRot.BEARING.u = 0.04;
