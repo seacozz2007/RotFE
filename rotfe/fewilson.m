@@ -60,7 +60,8 @@ for it=1:nt                                              % loop for each time st
    fy = Rot.RS.me*W^2*cos(W*it*dt)*W*it*dt;
    
    %计算 油膜压力
-   
+
+   %赋值到
    fd(Rot.RS.Unban*2-1,it+1) = fx;
    fd(Rot.RS.Unban*2-1+Rot.dim/2) =fy;
    %附值到fd上;
