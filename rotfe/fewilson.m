@@ -1,4 +1,5 @@
 function [acc,vel,dsp]=fewilson(Rot)
+global ufd bfd;
 %function [acc,vel,dsp]=wilson(kk,cc,mm,fd,bcdof,nt,dt,q0,dq0)
 %--------------------------------------------------------------------------
 %  Purpose:
@@ -23,16 +24,21 @@ function [acc,vel,dsp]=fewilson(Rot)
 %--------------------------------------------------------------------------
 kk=full(Rot.K);
 mm=full(Rot.M);
-cc=Rot*kk*Rot.B+Rot.W*full(Rot.G);
+cc=kk*Rot.B+Rot.W*full(Rot.G);
 [sdof,n2]=size(kk);
 nt=Rot.RS.nt;
+dt=Rot.RS.dt;
 dsp=zeros(sdof,nt);                                         % displacement matrix
 vel=zeros(sdof,nt);                                             % velocity matrix
 acc=zeros(sdof,nt);                                          % acceleration matrix
- 
+
+fd=zeros(Rot.dim,nt+1);
+ufd=fd;    %不平衡力
+bfd=fd;     %油腻压力
+
 dsp(:,1)=Rot.RS.q0;                                               % initial displacement
 vel(:,1)=Rot.RS.dq0;                                                   % initial velocity
-W = RS.W;
+W = Rot.W;
 bcdof = Rot.RS.bcdof;
 theta=1.4;                                          % select the parameters
 %--------------------------------------------------------------------------
@@ -43,6 +49,8 @@ acc(:,1)=inv(mm)*(fd(:,1)-kk*dsp(:,1)-cc*vel(:,1));
                                             % compute the initial acceleration (t=0)
 ekk=kk+mm*(6/(theta*dt)^2)+cc*(3/(theta*dt));
                                            % compute the effective stiffness matrix
+                                           
+
 for i=1:sdof                  % assign zero to dsp, vel, acc of the dofs associated with bc
   if bcdof(i)==1
     dsp(i,1)=0;
@@ -50,21 +58,28 @@ for i=1:sdof                  % assign zero to dsp, vel, acc of the dofs associa
     acc(i,1)=0;
   end
 end
-fd=zeros(RS.dim,nt);
+
 for it=1:nt                                              % loop for each time step
    %计算 不平衡力
-   
-   %x方向
-   fx = Rot.RS.me*W^2*cos(W*it*dt);
+   ufx = Rot.RS.me*W^2*cos(W*it*dt);
    %fy = Rot.RS.me*W^2*sin(W*it*dt);
-   fy = Rot.RS.me*W^2*cos(W*it*dt)*W*it*dt;
+   ufy = Rot.RS.me*W^2*cos(W*it*dt)*W*it*dt;
+   
+   %附值到ufd上;
+   [unx,uny] = getXYnode(Rot,Rot.RS.Unban);
+   ufd(unx,it+1) = ufx;
+   ufd(uny,it+1) = ufy;
    
    %计算 油膜压力
-
-   %赋值到
-   fd(Rot.RS.Unban*2-1,it+1) = fx;
-   fd(Rot.RS.Unban*2-1+Rot.dim/2) =fy;
-   %附值到fd上;
+   for bi = Rot.RS.Springs
+       [bnx,bny] = getXYnode(Rot,bi);
+       [bfx,bfy]=getRotFxFyFun(Rot,dsp(bnx,it),dsp(bny,it),vel(bnx,it),vel(bny,it));
+       %赋值到bfd上;
+       bfd(bnx,it+1) = bfx;
+       bfd(bny,it+1) = bfy;
+   end
+  
+  fd = ufd+bfd;
    
   cfm=dsp(:,it)*(6/(theta*dt)^2)+vel(:,it)*(6/(theta*dt))+2*acc(:,it);
   cfc=dsp(:,it)*(3/(theta*dt))+2*vel(:,it)+acc(:,it)*(theta*dt/2);
@@ -100,3 +115,4 @@ disp('The method is Wilson   integration')
 %--------------------------------------------------------------------------
 %     The end
 %--------------------------------------------------------------------------
+

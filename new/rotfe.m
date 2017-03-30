@@ -54,7 +54,11 @@ Kst=M;  % newly introduced (28-8-98) pseudo stiffnes due to angular acceleration
 
 dof=1:dim;   
 %  
-W=0;  % compute for normalised speed of rotation 
+if exist('W')
+else
+   W=0;  % compute for normalised speed of rotation  
+end
+
 
 %>>>> NOTE that both G and KH need to be multiplied by the real W (speed of rotation)  
 %  

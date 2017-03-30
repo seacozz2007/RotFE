@@ -23,10 +23,11 @@ RSRot.RS.nt = 1000;
 RSRot.RS.dt = 0.1;
 
 %激励力
-RSRot.RS.Springs=[1 3];
+RSRot.RS.Force=[1 3];
 %油膜压力
 RSRot.RS.Springs=[1 3];
 %不平衡力
+RSRot.RS.me = 2e-5;
 RSRot.RS.Unban=[2];
 
 %时间序列
@@ -46,3 +47,5 @@ RSRot.BEARING.C = 90e-6;
 RSRot.BEARING.D = 0.031;
 RSRot.BEARING.R = RSRot.BEARING.D/2;
 RSRot.BEARING.u = 0.04;
+
+RSRot.W = 0;

@@ -1,6 +1,15 @@
-function [Fx,Fy]=fetFxFyFun(x,y,x_dot,y_dot)
-a = AFun(x,y,x_dot,y_dot);
-ff_1 = -((x-2*y_dot)^2+(y+2*x_dot)^2)^0.5/(1-x^2-y^2);
-Fx = ff_1 * (3*x*VFun(x,y,a)-sin(a)*GFun(x,y,a)-2*cos(a)*SFun(x,y,a));
-Fy = ff_1 * (3*y*VFun(x,y,a)-cos(a)*GFun(x,y,a)-2*sin(a)*SFun(x,y,a));
+function [Fx,Fy]=getRotFxFyFun(Rot,X,Y,X_dot,Y_dot)
+    R = Rot.BEARING.R;
+    C = Rot.BEARING.C;
+    L = Rot.BEARING.L;
+    u = Rot.BEARING.u;
+    D = Rot.BEARING.D;
+    x = X/C;
+    y = Y/C;
+    x_dot = X_dot/C;
+    y_dot = Y_dot/C;
+    S = u * Rot.W * (R^2/C^2)*(L^2/D^2)* R * L;
+    [sFx,sFy] =  FxFyFun(x,y,x_dot,y_dot);
+    Fx = sFx * S;
+    Fy = sFy * S;
 end
