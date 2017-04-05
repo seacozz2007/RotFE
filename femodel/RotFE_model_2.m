@@ -18,14 +18,16 @@ RSRot.B=25e-5;
 %自由度
 RSRot.RS.nDOF= RSRot.dim; 
 %总步长
-RSRot.RS.nt = 1000; 
+RSRot.RS.nt = 1e4; 
 %步间
-RSRot.RS.dt = 0.1;
+RSRot.RS.dt = 1e-5;
 
 %激励力
-RSRot.RS.Force=[1 3];
+RSRot.RS.T = 0;
+RSRot.RS.Force=[];
 %油膜压力
 RSRot.RS.Springs=[1 3];
+
 %不平衡力
 RSRot.RS.me = 2e-5;
 RSRot.RS.Unban=[2];
@@ -40,6 +42,7 @@ RSRot.RS.q0=zeros(RSRot.RS.nDOF,1);
 RSRot.RS.dq0=zeros(RSRot.RS.nDOF,1);
 %边界条件  无约束
 RSRot.RS.bcdof=zeros(RSRot.RS.nDOF,1);
+%RSRot.RS.bcdof=[1 1 0 0 1 1 1 1 0 0 1 1];
 
 %轴承参数
 RSRot.BEARING.L = 0.01;
@@ -48,4 +51,4 @@ RSRot.BEARING.D = 0.031;
 RSRot.BEARING.R = RSRot.BEARING.D/2;
 RSRot.BEARING.u = 0.04;
 
-RSRot.W = 0;
+RSRot.W = 20;
