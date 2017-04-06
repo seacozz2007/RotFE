@@ -44,10 +44,9 @@ function [dz]=odefun(t,Z,Rot)
     invM=inv(Rot.RS.mm);
     dz=zeros(2*n,1);
     dz(1:n) = B;
-    dz((n+1):(n*2)) = (- invM*Rot.RS.cc*B-invM*Rot.RS.kk*A +fd);
-    
-    
-     for i=1:n                  % assign zero to dsp, vel, acc of the dofs associated with bc
+    dz((n+1):(n*2)) = (- invM*Rot.RS.cc*B-invM*Rot.RS.kk*A +invM*fd);
+        
+    for i=1:n                  % assign zero to dsp, vel, acc of the dofs associated with bc
          if bcdof(i)==1
              dz(i)=0;
              dz(i+n)=0;
