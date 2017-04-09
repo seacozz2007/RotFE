@@ -1,6 +1,31 @@
-function [acc,vel,dsp]=fewilson(Rot)
-%global ufd bfd fd kk;
+clear all;
+%振动方程组
+%m1--k1--m2--k2--m3
+%f1------f2------f3
+%f1=sin(wt)  f2=0  f3=0
+%c1------c2------c3
+
+%方程:
+%m1*x1..+c1*x1.+k1(x1-x2)=f1
+%m2*x2..+c2*x2.+k1(x2-x1)+k2(x2-x3)=f2
+%m3*x3..+c3*x3.+k2(x3-x2)=f3
+
+m1=1;m2=1;m3=1;
+k1=1;k2=1;
+c1=0.1;c2=0.1;c3=0.1;
+f1=1;
+M=[m1 0 0;0 m2 0;0 0 m3];
+K=[k1 -k1 0;-k1 k1+k2 -k2;0 -k2 k2];
+C=[c1 0 0;0 c2 0;0 0 c3];
+
+kk=K;mm=M;cc=C;
+nt=1000;
+dt=0.1;
+q0=[0 0 0];
+dq0=[0 0 0]; 
+bcdof=[0 0 0];
 %function [acc,vel,dsp]=wilson(kk,cc,mm,fd,bcdof,nt,dt,q0,dq0)
+
 %--------------------------------------------------------------------------
 %  Purpose:
 %     The function subroutine TransResp4.m calculates transient response of
@@ -22,37 +47,28 @@ function [acc,vel,dsp]=fewilson(Rot)
 %--------------------------------------------------------------------------
 %  (1) initial condition
 %--------------------------------------------------------------------------
-kk=full(Rot.K);
-mm=full(Rot.M);
-cc=kk*Rot.B+Rot.W*full(Rot.G);
 [sdof,n2]=size(kk);
-nt=Rot.RS.nt;
-dt=Rot.RS.dt;
 
 dsp=zeros(sdof,nt);                                         % displacement matrix
 vel=zeros(sdof,nt);                                             % velocity matrix
 acc=zeros(sdof,nt);                                          % acceleration matrix
-
-fd=zeros(Rot.dim,nt+1);
-tfd=fd;     %激励力
-ufd=fd;     %不平衡力
-bfd=fd;     %油腻压力
-
-dsp(:,1)=Rot.RS.q0;                                               % initial displacement
-vel(:,1)=Rot.RS.dq0;                                                   % initial velocity
-W = Rot.W;
-bcdof = Rot.RS.bcdof;
+ 
+dsp(:,1)=q0;                                               % initial displacement
+vel(:,1)=dq0;                                                   % initial velocity
+ 
 theta=1.4;                                          % select the parameters
+
+
+%CAL THE F
+fd(:,1)=[0 0 0];
+
 %--------------------------------------------------------------------------
 %  (2) Wilson   integration scheme for time integration
 %--------------------------------------------------------------------------
-
 acc(:,1)=inv(mm)*(fd(:,1)-kk*dsp(:,1)-cc*vel(:,1));
                                             % compute the initial acceleration (t=0)
 ekk=kk+mm*(6/(theta*dt)^2)+cc*(3/(theta*dt));
                                            % compute the effective stiffness matrix
-                                           
-
 for i=1:sdof                  % assign zero to dsp, vel, acc of the dofs associated with bc
   if bcdof(i)==1
     dsp(i,1)=0;
@@ -63,41 +79,10 @@ end
 
 for it=1:nt                                              % loop for each time step
     
-   %计算激励力 附值到tfd上;
-    for bi = Rot.RS.Force
-        tfx = Rot.RS.T*cos(W*it*dt);
-        tfy = Rot.RS.T*sin(W*it*dt);
-        [unx,uny] = getXYnode(Rot,bi);
-        tfd(unx,it+1) = tfx;
-        tfd(uny,it+1) = tfy;
-    end
+   %CAL THE F
+    fd(:,it)=[sin(it*dt) 0 0];
+    fd(:,it+1)=[sin((it+1)*dt) 0 0];
     
-   
-    %计算不平衡力 附值到ufd上;
-    for bi = Rot.RS.Unban
-        ufx = Rot.RS.me*W^2*cos(W*it*dt);
-        ufy = Rot.RS.me*W^2*cos(W*it*dt)*W*it*dt;
-        [unx,uny] = getXYnode(Rot,bi);
-        ufd(unx,it+1) = ufx;
-        ufd(uny,it+1) = ufy;
-    end
-
-    %计算 油膜压力
-    for bi = Rot.RS.Springs
-        [bnx,bny] = getXYnode(Rot,bi);
-        [bfx,bfy] = getRotFxFyFun(Rot,dsp(bnx,it),dsp(bny,it),vel(bnx,it),vel(bny,it));
-        %赋值到bfd上;
-        bfd(bnx,it+1) = bfx;
-        bfd(bny,it+1) = bfy;
-    end
-    fd(:,it+1) = tfd(:,it+1) + ufd(:,it+1)+bfd(:,it+1);
-
-  %display([' x:' num2str(dsp(bnx,it)) '   y:' num2str(dsp(bny,it))])
-  %display(['cx:' num2str(dsp(bnx,it)/Rot.BEARING.C) '  cy:' num2str(dsp(bny,it)/Rot.BEARING.C)])
-  %display(['ufx:' num2str(ufx) ' ufy:' num2str(ufy)])
-  %display(['bfx:' num2str(bfx) ' bfy:' num2str(bfy)])
-  %display([' fx:' num2str(bfx) '  fy:' num2str(bfy)])
-  
   cfm=dsp(:,it)*(6/(theta*dt)^2)+vel(:,it)*(6/(theta*dt))+2*acc(:,it);
   cfc=dsp(:,it)*(3/(theta*dt))+2*vel(:,it)+acc(:,it)*(theta*dt/2);
   efd=fd(:,it)+theta*(fd(:,it+1)-fd(:,it))+mm*cfm+cc*cfc;
@@ -120,8 +105,9 @@ for it=1:nt                                              % loop for each time st
       acc(i,it+1)=0;
     end
   end
+ 
 end
-
+ 
 if cc(1,1)==0
   disp('The transient response results of undamping system')
 else
@@ -132,4 +118,8 @@ disp('The method is Wilson   integration')
 %--------------------------------------------------------------------------
 %     The end
 %--------------------------------------------------------------------------
-
+figure;
+    t=0:dt:(dt*nt);
+    subplot(3,1,1); plot(t,dsp(1,:),'-');
+    subplot(3,1,2); plot(t,dsp(2,:),'-');
+    subplot(3,1,3); plot(t,dsp(3,:),'-');
