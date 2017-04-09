@@ -28,7 +28,7 @@ RSRot.dim = 6;
 RSRot.M=sparse(M);
 RSRot.K=sparse(K);
 RSRot.G=sparse(G);
-
+RSRot.invM = inv(M);
 %自由度
 RSRot.RS.nDOF= RSRot.dim; 
 %总步长
@@ -69,4 +69,5 @@ RSRot.BEARING.u = 0.04;
 
 %阻尼系统
 RSRot.B=25e-5;
-RSRot.W = 20*pi;
+
+RSRot.C = RSRot.K*RSRot.B+RSRot.W*RSRot.G;

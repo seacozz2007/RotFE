@@ -43,7 +43,7 @@ function [dz]=odefun(t,Z,Rot)
     end
     fd = tfd + ufd + bfd;
     
-    invM=inv(Rot.M);
+    invM=Rot.invM;
     
     dz=zeros(2*n,1);
     dz(1:n) = B;
