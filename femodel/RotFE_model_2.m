@@ -18,9 +18,9 @@ RSRot.B=25e-5;
 %自由度
 RSRot.RS.nDOF= RSRot.dim; 
 %总步长
-RSRot.RS.nt = 1e4; 
+RSRot.RS.nt = 1e3; 
 %步间
-RSRot.RS.dt = 1e-5;
+RSRot.RS.dt = 1e-1;
 
 %激励力
 RSRot.RS.T = 0;

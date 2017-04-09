@@ -15,28 +15,20 @@ MM = full(RSRot.M);
 KK = full(RSRot.K);
 GG = full(RSRot.G);
 
-m1=MM(1,1);m2=MM(3,3);m3=MM(5,5);
-c1=0.1;c2=0.1;c3=0.1;
-f1=1;
-M=[m1 0 0;0 m2 0;0 0 m3];
-K=KK(1:2:5,1:2:5);
-C=GG(1:2:5,1:2:5);
+M=MM(1:2:12,1:2:12);
+%质量矩阵不一定正确;
+%M=diag(diag(M),0);
 
-m1=1;m2=1;m3=1;
-k1=1;k2=1;
-c1=0.1;c2=0.1;c3=0.1;
+K=KK(1:2:12,1:2:12);
+G=GG(1:2:12,1:2:12);
 
-%M=[m1 0 0;0 m2 0;0 0 m3];
-K=[k1 -k1 0;-k1 k1+k2 -k2;0 -k2 k2];
-C=[c1 0 0;0 c2 0;0 0 c3];
 
-E0=zeros(3,3);
 RSRot.dim = 6;
 
-RSRot.M=sparse([M E0;E0 M]);
-RSRot.K=sparse([K E0;E0 K]);
-RSRot.G=sparse([C E0;E0 C]);
-RSRot.C=sparse([C E0;E0 C]);
+RSRot.M=sparse(M);
+RSRot.K=sparse(K);
+RSRot.G=sparse(G);
+
 %自由度
 RSRot.RS.nDOF= RSRot.dim; 
 %总步长
@@ -46,13 +38,13 @@ RSRot.RS.dt = 0.1;
 
 %激励力
 RSRot.RS.T = 1;
-RSRot.RS.Force=[1];
+RSRot.RS.Force=[];
 %油膜压力
-RSRot.RS.Springs=[];
+RSRot.RS.Springs=[1 3];
 
 %不平衡力
 RSRot.RS.me = 2e-5;
-RSRot.RS.Unban=[];
+RSRot.RS.Unban=[2];
 
 %时间序列
 %RSRot.RS.t = 0:RSRot.RS.dt:(RSRot.RS.dt*RSRot.RS.nt);
@@ -76,5 +68,5 @@ RSRot.BEARING.R = RSRot.BEARING.D/2;
 RSRot.BEARING.u = 0.04;
 
 %阻尼系统
-RSRot.B=0;
-RSRot.W = 1;
+RSRot.B=25e-5;
+RSRot.W = 20*pi;
