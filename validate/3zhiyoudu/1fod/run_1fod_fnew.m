@@ -25,7 +25,7 @@ for it=1:(nt+1)                                              % loop for each tim
     %fd(:,it+1)=[f1*cos(w*(it+1)*dt)];
 end
 
-[acc,vel,dsp]=wilson(kk,cc,mm,fd,bcdof,nt,dt,q0,dq0);
+[acc,vel,dsp]=newmark(kk,cc,mm,fd,bcdof,nt,dt,q0,dq0);
 
     t=0:dt:(dt*nt);
-    subplot(3,1,1); plot(t,dsp(1,:),'-');
+    subplot(3,1,2); plot(t,dsp(1,:),'-');

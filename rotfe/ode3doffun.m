@@ -17,12 +17,12 @@ function [dz]=ode3doffun(t,Z,W,invM,kk,cc,me,S,C)
     fd(5) = me*W^2*cos(W*t)*W*t;
 
     %º∆À„ ”Õƒ§—π¡¶
-    [bfx,bfy] = getSFxFyFun(S,A(1)/C,A(4)/C,B(1)/C,B(4)/C);
-    fd(1) = bfx;
-    fd(4) = bfy;
-    [bfx,bfy] = getSFxFyFun(S,A(3)/C,A(6)/C,B(3)/C,B(6)/C);
-    fd(3) = bfx;
-    fd(6) = bfy;
+%     [bfx,bfy] = getSFxFyFun(S,A(1)/C,A(4)/C,B(1)/C,B(4)/C);
+%     fd(1) = bfx;
+%     fd(4) = bfy;
+%     [bfx,bfy] = getSFxFyFun(S,A(3)/C,A(6)/C,B(3)/C,B(6)/C);
+%     fd(3) = bfx;
+%     fd(6) = bfy;
 
     dz=zeros(2*n,1);
     dz(1:n) = B;

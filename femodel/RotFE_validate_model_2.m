@@ -36,7 +36,7 @@ RSRot.RS.dt = 0.1;
 RSRot.RS.T = 1;
 RSRot.RS.Force=[1];
 %油膜压力
-RSRot.RS.Springs=[];
+RSRot.RS.Springs=[1 3];
 
 %不平衡力
 RSRot.RS.me = 2e-5;

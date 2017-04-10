@@ -1,4 +1,4 @@
-function [dz]=ffun(t,Z)
+function [dz]=ffun2(t,Z)
 %振动方程组dJSFunZ_W_R_M_E()
 %m1--k1--m2--k2--m3
 %f1------f2------f3
@@ -16,9 +16,10 @@ function [dz]=ffun(t,Z)
 
 init;
 
-n=3;
 
-fd=[cos(w*t)*f1 0 0]';
+[na n]=size(M);
+fd=zeros(n,1);
+fd(1)=cos(w*t)*f1;
 
 % n=6;
 % E0=zeros(n/2);

@@ -3,4 +3,4 @@
     iniM=zeros(1,2);
     init_1fod;
     [t,xy]=ode45(@ffun_1fod,0:dt:dt*nt,iniM,options);
-    subplot(2,1,2); plot(t,xy(:,1),'-');
+    subplot(3,1,3); plot(t,xy(:,1),'-');

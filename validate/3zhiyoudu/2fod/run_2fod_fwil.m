@@ -10,22 +10,24 @@ clear all;
 %m2*x2..+c2*x2.+k1(x2-x1)+k2(x2-x3)=f2
 %m3*x3..+c3*x3.+k2(x3-x2)=f3
 
-init_1fod;
+init_2fod;
+[na n]=size(M);
 
 kk=K;mm=M;cc=C;
 
-q0=[0];
-dq0=[0]; 
-bcdof=[0];
-
+q0=zeros(1,n);
+dq0=zeros(1,n); 
+bcdof=zeros(1,n);
+fd=zeros(n,nt+1);
 %º∆À„ fd
 for it=1:(nt+1)                                              % loop for each time step
    %CAL THE F
-    fd(it)=[f1*cos(w*it*dt)];
+    fd(1,it)=f1*cos(w*it*dt);
     %fd(:,it+1)=[f1*cos(w*(it+1)*dt)];
 end
 
 [acc,vel,dsp]=wilson(kk,cc,mm,fd,bcdof,nt,dt,q0,dq0);
 
     t=0:dt:(dt*nt);
-    subplot(3,1,1); plot(t,dsp(1,:),'-');
+    subplot(3,2,1); plot(t,dsp(1,:),'-');
+    subplot(3,2,2); plot(t,dsp(2,:),'-');

@@ -20,9 +20,10 @@ RSRot.W = 1;
 RSRot.RS.kk = full(RSRot.K);
 RSRot.RS.mm = full(RSRot.M);
 RSRot.RS.gg = full(RSRot.G);
+RSRot.invM = inv(RSRot.M);
 RSRot.RS.cc = RSRot.RS.kk*RSRot.B+RSRot.W*RSRot.RS.gg;
 %º∆À„œÏ”¶«˙œﬂ
-[acc,vel,dsp]=fewilson(RSRot);t2 = 0:RSRot.RS.dt:RSRot.RS.nt*RSRot.RS.dt;
+%[acc,vel,dsp]=fewilson(RSRot);t2 = 0:RSRot.RS.dt:RSRot.RS.nt*RSRot.RS.dt;
 
 %plot(t,dsp(1,:));
 %plot(t,fd(3,:));

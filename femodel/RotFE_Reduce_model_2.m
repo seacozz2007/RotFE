@@ -10,6 +10,9 @@
 % (7) Point force participation matrices
 % (8) Point mass (linear and Angular, m & J)
 %
+
+
+
 % by:seaco 20170116
 MM = full(RSRot.M);
 KK = full(RSRot.K);
@@ -28,6 +31,13 @@ RSRot.dim = 6;
 RSRot.M=sparse(M);
 RSRot.K=sparse(K);
 RSRot.G=sparse(G);
+
+
+
+
+
+
+
 RSRot.invM = inv(M);
 %втси╤х
 RSRot.RS.nDOF= RSRot.dim; 
